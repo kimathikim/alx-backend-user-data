@@ -16,7 +16,8 @@ class BasicAuth(Auth):
         self._db = None
         super().__init__()
 
-    def extract_base64_authorization_header(self, authorization_header: str):
+    def extract_base64_authorization_header(
+            self, authorization_header: str) -> str:
         """This method extracts the base64 authorization header"""
         if (
             authorization_header is None
@@ -35,10 +36,12 @@ class BasicAuth(Auth):
             base64_authorization_header is None
             or isinstance(base64_authorization_header, str) is False
         ):
-            return "None"
+            return None
         try:
-            # return  decoded value as UTF8 string - you can use decode('utf-8')
-            return base64.b64decode(base64_authorization_header).decode("utf-8")
+            return base64.b64decode(base64_authorization_header).decode(
+                "\
+            utf-8"
+            )
         except Exception:
             return None
 
@@ -48,16 +51,17 @@ class BasicAuth(Auth):
         """this function returns the user email and password"""
         if (
             decoded_base64_authorization_header is None
-            or type(decoded_base64_authorization_header) is not str
+            or isinstance(decoded_base64_authorization_header, str) is False
         ):
             return (None, None)
-        if ":" in decoded_base64_authorization_header:
+        if ":" not in decoded_base64_authorization_header:
             return (None, None)
         email = decoded_base64_authorization_header.split(":")[0]
         password = decoded_base64_authorization_header.split(":")[1]
         return (email, password)
 
-    def user_object_from_credentials(self, user_email: str, user_pwd: str) -> TypeVar(
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> TypeVar(
         "User"
     ):
         """returns the User instance based on his email and password"""

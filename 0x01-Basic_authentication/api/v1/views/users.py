@@ -27,9 +27,15 @@ def view_one_user(user_id: str = None) -> str:
     """
     if user_id is None:
         abort(404)
+    if user_id == "me" and request.current_user is None:
+        abort(404)
+    if user_id == "me" and request.current_user is not None:
+        user = User.get(user_id)
+        return user
     user = User.get(user_id)
     if user is None:
         abort(404)
+
     return jsonify(user.to_json())
 
 
@@ -67,7 +73,7 @@ def create_user() -> str:
     error_msg = None
     try:
         rj = request.get_json()
-    except Exception as e:
+    except Exception:
         rj = None
     if rj is None:
         error_msg = "Wrong format"
@@ -110,7 +116,7 @@ def update_user(user_id: str = None) -> str:
     rj = None
     try:
         rj = request.get_json()
-    except Exception as e:
+    except Exception:
         rj = None
     if rj is None:
         return jsonify({"error": "Wrong format"}), 400
@@ -121,6 +127,7 @@ def update_user(user_id: str = None) -> str:
     user.save()
     return jsonify(user.to_json()), 200
 
+
 @app_views.route("/unauthorized", methods=["GET"], strict_slashes=False)
 def unauthorized() -> str:
     """GET /api/v1/unauthorized
@@ -129,9 +136,8 @@ def unauthorized() -> str:
     """
     abort(401)
 
+
 @app_views.route("/forbidden", methods=["GET"], strict_slashes=False)
 def forbidden() -> str:
-    """GET /api/v1/forbidden
-    """
+    """GET /api/v1/forbidden"""
     abort(403)
-

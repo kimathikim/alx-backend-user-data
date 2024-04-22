@@ -4,8 +4,10 @@
 from flask import request
 from typing import TypeVar
 
+
 class Auth:
     """THIS CLASS HAS THE AUTHENTICATION METHODS"""
+
     def require_auth(self, path: str, excluded_paths: list) -> bool:
         """This method checks if the path requires authentication"""
         if path is None or excluded_paths is None or excluded_paths == []:
@@ -13,7 +15,10 @@ class Auth:
         if path[-1] != "/":
             path = path + "/"
         for excluded_path in excluded_paths:
-            if excluded_path.endswith("*") and path.startswith(excluded_path[:-1]):
+            if excluded_path.endswith(
+                "\
+            *"
+            ) and path.startswith(excluded_path[:-1]):
                 return False
             if path == excluded_path:
                 return False
@@ -25,7 +30,7 @@ class Auth:
             return None
         return request.headers["Authorization"]
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(self, request=None) -> TypeVar("User"):
         """This method returns the current user"""
         return None
 

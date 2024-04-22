@@ -16,9 +16,12 @@ class BasicAuth(Auth):
         self._db = None
         super().__init__()
 
-    def extract_base64_authorization_header(self, authorization_header: str) -> str:
+    def extract_base64_authorization_header(self, authorization_header: str):
         """This method extracts the base64 authorization header"""
-        if authorization_header is None or type(authorization_header) is not str:
+        if (
+            authorization_header is None
+            or isinstance(authorization_header, str) is False
+        ):
             return None
         if authorization_header[:6] != "Basic ":
             return None
@@ -48,7 +51,7 @@ class BasicAuth(Auth):
             or type(decoded_base64_authorization_header) is not str
         ):
             return (None, None)
-        if ":" not in decoded_base64_authorization_header:
+        if ":" in decoded_base64_authorization_header:
             return (None, None)
         email = decoded_base64_authorization_header.split(":")[0]
         password = decoded_base64_authorization_header.split(":")[1]

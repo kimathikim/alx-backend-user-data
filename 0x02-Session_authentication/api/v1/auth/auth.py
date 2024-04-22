@@ -2,6 +2,7 @@
 """This module has the authentication routes"""
 
 from flask import request
+from os import getenv
 from typing import TypeVar
 
 
@@ -38,6 +39,5 @@ class Auth:
         """This method returns the session cookie"""
         if request is None:
             return None
-        if "session_id" not in request.cookies:
-            return None
-        return request.cookies["session_id"]
+        session_name = getenv("SESSION_NAME")
+        return request.cookies.get(session_name)

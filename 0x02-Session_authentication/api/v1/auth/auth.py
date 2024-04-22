@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """This module has the authentication routes"""
 
-from flask import request
 from os import getenv
 from typing import TypeVar
 
@@ -35,7 +34,7 @@ class Auth:
         """This method returns the current user"""
         return None
 
-    def session_cookie(self, rquest=None):
+    def session_cookie(self, request=None):
         """This method returns the session cookie"""
         if request is None:
             return None

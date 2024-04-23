@@ -35,5 +35,4 @@ class SessionAuth(Auth):
         session_id = Auth().session_cookie(request)
         user_id = self.user_id_for_session_id(session_id)
         user = User().get(user_id)
-
         return user

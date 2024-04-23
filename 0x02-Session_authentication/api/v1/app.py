@@ -16,6 +16,12 @@ from api.v1.views import app_views
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+if getenv("AUTH_TYPE") == "basic_auth":
+    auth = BasicAuth()
+elif getenv("AUTH_TYPE") == "session_auth":
+    auth = SessionAuth()
+else:
+    auth = Auth()
 
 
 @app.errorhandler(404)
@@ -39,18 +45,13 @@ def forbidden(error) -> str:
 @app.before_request
 def before_request():
     """Before request handler"""
-    if getenv("AUTH_TYPE") == "basic_auth":
-        auth = BasicAuth()
-    elif getenv("AUTH_TYPE") == "session_auth":
-        auth = SessionAuth()
-    else:
-        auth = Auth()
     if auth:
         request.current_user = auth.current_user(request)
         required_paths = [
             "/api/v1/status/",
             "/api/v1/unauthorized/",
             "/api/v1/auth_session/login/",
+            "/api/v1/auth_session/logout/",
             "/api/v1/forbidden/",
         ]
         if auth.require_auth(request.path, required_paths):

@@ -33,3 +33,18 @@ def login():
         out.set_cookie(session_name, session_id)
         return out
     return jsonify({"error": "no user found for this email"}), 404
+
+
+@app_views.route(
+    "/auth_session/logout\
+",
+    methods=["DELETE"],
+    strict_slashes=False,
+)
+def logout():
+    """This route should logout the user"""
+    from api.v1.app import auth
+
+    if auth.destroy_session(request):
+        return jsonify({}), 200
+    return jsonify({}), 404

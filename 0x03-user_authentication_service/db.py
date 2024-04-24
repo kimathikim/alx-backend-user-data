@@ -26,11 +26,16 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """Add a new user to the database"""
-        if email is None or hashed_password is None:
-            return None
-        from user import User
+        """add user to database
 
+        Args:
+            email (string): email of user
+            hashed_password (string): password of user
+        Returns:
+            User: user created
+        """
+        if not email or not hashed_password:
+            return
         user = User(email=email, hashed_password=hashed_password)
         session = self._session
         session.add(user)

@@ -46,7 +46,7 @@ class DB:
         Args:
             **kwargs: attribute to search
         Returns:
-            User: user found
+            User: user foundsei
         """
         if not kwargs:
             return
@@ -60,3 +60,14 @@ class DB:
             raise NoResultFound
 
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """update the user by id"""
+        session = self._session
+        user = session.query(User).filter_by(id=user_id).first()
+        # get the key and the value of the
+        # kwargs(data provided to be changed in the database) of the User
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError
+            setattr(user, key, value)

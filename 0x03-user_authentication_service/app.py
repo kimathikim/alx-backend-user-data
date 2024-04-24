@@ -14,7 +14,7 @@ def test():
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route("/user", methods=["POST"], strict_slashes=False)
+@app.route("/users", methods=["POST"], strict_slashes=False)
 def register_user():
     """Register a new user"""
     email = request.form.get("email")

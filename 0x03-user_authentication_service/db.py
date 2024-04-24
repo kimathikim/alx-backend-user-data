@@ -5,11 +5,9 @@ BD class
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.exc import NoResultFound
 from user import Base, User
-
-
-DATA = ["id", "email", "hashed_password", "session_id", "reset_token"]
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 
 
 class DB:
@@ -44,26 +42,31 @@ class DB:
         return user
 
     def find_user_by(self, **kwargs) -> User:
-        """find user by some arguments
-
+        """find user by attribute
+        Args:
+            **kwargs: attribute to search
         Returns:
-            User: user found or raise error
+            User: user foundsei
         """
-        user = self._session.query(User).filter_by(**kwargs).first()
-        if not user:
+        if not kwargs:
+            return
+
+        session = self._session
+        try:
+            user = session.query(User).filter_by(**kwargs).first()
+        except InvalidRequestError:
+            raise InvalidRequestError
+        if user is None:
             raise NoResultFound
+
         return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
-        """Update user
-
-        Args:
-            user_id (int): id of user
-        """
+        """update the user by id"""
         user = self.find_user_by(id=user_id)
-        for key, val in kwargs.items():
-            if key not in DATA:
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
                 raise ValueError
-            setattr(user, key, val)
+            setattr(user, key, value)
         self._session.commit()
         return None

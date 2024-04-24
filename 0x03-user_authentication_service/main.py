@@ -3,19 +3,17 @@
 Main file
 """
 
-from db import DB
+from auth import Auth
 
+email = "bob@bob.com"
+password = "MyPwdOfBob"
+auth = Auth()
 
-my_db = DB()
+auth.register_user(email, password)
 
-email = "test@test.com"
-hashed_password = "hashedPwd"
+print(auth.valid_login(email, password))
 
-user = my_db.add_user(email, hashed_password)
-print(user.id)
+print(auth.valid_login(email, "WrongPwd"))
 
-try:
-    my_db.update_user(user.id, hashed_password="NewPwd")
-    print("Password updated")
-except ValueError:
-    print("Error")
+print(auth.valid_login("unknown@email", password))
+

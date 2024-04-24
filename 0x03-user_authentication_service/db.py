@@ -6,6 +6,8 @@ BD class
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from user import Base, User
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 
 
 class DB:
@@ -37,4 +39,24 @@ class DB:
         session = self._session
         session.add(user)
         session.commit()
+        return user
+
+    def find_user_by(self, **kwargs) -> User:
+        """find user by attribute
+        Args:
+            **kwargs: attribute to search
+        Returns:
+            User: user found
+        """
+        if not kwargs:
+            return
+
+        session = self._session
+        try:
+            user = session.query(User).filter_by(**kwargs).first()
+        except InvalidRequestError:
+            raise InvalidRequestError
+        if user is None:
+            raise NoResultFound
+
         return user
